@@ -3,595 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Lucky Mubeti</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Lucky MM - Software Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151937;
+            --accent-purple: #a78bfa;
+            --accent-cyan: #22d3ee;
+            --accent-pink: #f472b6;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-dim: #64748b;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            background-color: #ffffff;
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 1000px;
+            font-family: 'DM Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.15s ease-out, border-color 0.2s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor.hover {
+            transform: scale(2);
+            border-color: var(--accent-pink);
+        }
+
+        /* Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 12vw, 9rem);
+            font-weight: 900;
+            line-height: 0.9;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Projects Section */
+        .projects-section {
+            padding: 8rem 2rem;
+            max-width: 1600px;
             margin: 0 auto;
         }
-        
-        h1, h2, h3 {
-            color: #222;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-        
-        h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-        
-        h3 {
-            font-size: 1.8rem;
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
             text-align: center;
-            margin: 50px auto 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eaeaea;
-            width: 80%;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
         }
-        
-        .header {
+
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-subtitle {
             text-align: center;
-            padding: 40px 20px 30px;
-            margin-bottom: 10px;
-        }
-        
-        .tagline {
-            font-size: 1.1rem;
-            color: #666;
-            margin-top: 15px;
-            font-weight: 400;
-        }
-        
-        .portfolio-item {
-            background: #ffffff;
-            border-radius: 6px;
-            margin: 30px 0;
-            overflow: hidden;
-            border: 1px solid #f0f0f0;
-            padding: 25px;
-        }
-        
-        .item-header {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .item-content {
-            padding: 0;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: #2c3e50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            margin: 10px 0;
-            transition: background 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .btn:hover {
-            background: #1a2530;
-        }
-        
-        p {
-            margin-bottom: 15px;
-            color: #444;
-            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 6rem;
             font-size: 1rem;
+            letter-spacing: 0.1em;
         }
-        
-        .tech-stack {
-            margin: 25px 0;
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
         }
-        
+
+        .project-card {
+            background: rgba(21, 25, 55, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(50px) rotateX(10deg);
+        }
+
+        .project-card.visible {
+            opacity: 1;
+            transform: translateY(0) rotateX(0);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(167, 139, 250, 0.1), 
+                rgba(34, 211, 238, 0.1), 
+                rgba(244, 114, 182, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(167, 139, 250, 0.6);
+            box-shadow: 0 20px 60px rgba(167, 139, 250, 0.3);
+        }
+
+        .project-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .project-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .project-role {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .project-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-highlights {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-highlights li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .project-highlights li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-pink);
+        }
+
         .tech-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
         }
-        
+
         .tech-tag {
-            background: #f5f7f9;
-            color: #2c3e50;
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            border: 1px solid #e6e9ec;
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--accent-purple);
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
         }
-        
-        .footer {
-            text-align: center;
-            margin-top: 60px;
-            padding: 30px 20px;
-            color: #777;
-            border-top: 1px solid #eee;
+
+        .tech-tag:hover {
+            background: rgba(167, 139, 250, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-cyan);
+            text-decoration: none;
             font-size: 0.9rem;
-        }
-        
-        .highlight-section {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 20px 0;
-            font-size: 0.95rem;
-            border-left: 3px solid #2c3e50;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            position: relative;
         }
 
-        .highlight-section strong {
-            color: #2c3e50;
+        .project-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-cyan);
+            transition: width 0.3s;
         }
 
-        .responsibilities {
-            margin: 20px 0;
+        .project-link:hover::after {
+            width: 100%;
         }
 
-        .responsibilities ul {
-            margin-left: 20px;
-            margin-top: 10px;
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(167, 139, 250, 0.1);
         }
 
-        .responsibilities li {
-            margin-bottom: 8px;
-            color: #444;
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
         }
-        
+
+        .footer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .social-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-5px);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .item-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
+            .hero-title {
+                font-size: 3rem;
             }
-            
-            h3 {
-                width: 95%;
-                font-size: 1.6rem;
+
+            .projects-grid {
+                grid-template-columns: 1fr;
             }
-            
-            .portfolio-item {
-                padding: 20px;
+
+            .project-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Prevent cursor on mobile */
+        @media (hover: none) {
+            body {
+                cursor: auto;
+            }
+            .cursor {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Portfolio</h1>
-    </div>
-    
-    <!-- Alignd - Enhanced Senior Level with Frontend + Orchestration Bullets -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-stethoscope"></i> Alignd Healthcare Platform</h2>
-            <a href="https://alignd.co.za/" class="btn" target="_blank">Visit Website</a>
-        </div>
-        
-        <div class="item-content">
-            <p><strong>Software Engineer - Alignd</strong></p>
-            
-            <p>Built and owned full-stack services for a healthcare management system integrating with South African medical schemes (GEMS, Bonitas, Polmed) serving healthcare providers nationwide.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Architected serverless ETL pipelines using AWS Lambda to automate data extraction from medical scheme APIs, processing and loading claim data into PostgreSQL for real-time analytics</li>
-                    <li>Designed fault-tolerant integration layer handling unreliable external APIs with retry logic and comprehensive error tracking via Sentry</li>
-                    <li>Built responsive, dynamic user interfaces using Vue.js, delivering features that improved user experience for healthcare providers and administrators</li>
-                    <li>Implemented clinical alerting system monitoring critical patient data points across distributed services</li>
-                    <li>Built and maintained cloud infrastructure on AWS (EC2, RDS, S3, Lambda) and Kubernetes, configuring VPC networking, security groups, and network policies for secure service communication</li>
-                    <li>Mentored development and actuarial interns while conducting code reviews and establishing engineering standards</li>
-                    <li>Designed multi-stage processing pipelines where each stage produced persisted, editable outputs that could be reviewed and selectively reprocessed without restarting the entire workflow</li>
-                    <li>Built long-running asynchronous background jobs for external API coordination, with explicit retry policies, idempotency, and partial failure recovery</li>
-                    <li>Introduced AI-assisted generation and analysis into production workflows while maintaining auditability, traceability, and human review</li>
-                    <li>Modeled complex state transitions across distributed services integrating multiple third-party APIs</li>
-                </ul>
-            </div>
-            
-            <div class="highlight-section">
-                <strong>Architecture:</strong> Django/Python backend with Vue.js frontend, deployed on AWS using Docker and Kubernetes. PostGIS for spatial queries, Redis for caching, CloudWatch and Sentry for observability.
-            </div>
-            
-            <div class="tech-stack">
-                <div class="tech-tags">
-                    <span class="tech-tag">Django</span>
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">Vue.js</span>
-                    <span class="tech-tag">AWS Lambda</span>
-                    <span class="tech-tag">Docker</span>
-                    <span class="tech-tag">Kubernetes</span>
-                    <span class="tech-tag">PostgreSQL</span>
-                    <span class="tech-tag">PostGIS</span>
-                    <span class="tech-tag">Redis</span>
-                    <span class="tech-tag">REST APIs</span>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+
+    <!-- Three.js Canvas Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 class="hero-title">Lucky MM</h1>
+            <p class="hero-subtitle">Software Engineer</p>
+            <div class="scroll-indicator">Scroll to explore ↓</div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section">
+            <h2 class="section-title">Featured Work</h2>
+            <p class="section-subtitle">Building scalable systems & delightful experiences</p>
+
+            <div class="projects-grid">
+                <!-- Alignd -->
+                <div class="project-card" data-delay="0">
+                    <div class="project-icon">🏥</div>
+                    <h3 class="project-title">Alignd</h3>
+                    <p class="project-role">Software Engineer</p>
+                    <p class="project-description">Healthcare platform integrating with South African medical schemes, serving providers nationwide.</p>
+                    <ul class="project-highlights">
+                        <li>Serverless ETL pipelines with AWS Lambda</li>
+                        <li>Fault-tolerant integration layer</li>
+                        <li>Real-time analytics dashboard</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Django</span>
+                        <span class="tech-tag">Vue.js</span>
+                        <span class="tech-tag">AWS</span>
+                        <span class="tech-tag">Kubernetes</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                    </div>
+                    <a href="https://alignd.co.za/" class="project-link" target="_blank">View Project →</a>
+                </div>
+
+                <!-- Weeva -->
+                <div class="project-card" data-delay="100">
+                    <div class="project-icon">🌱</div>
+                    <h3 class="project-title">Weeva (Travalyst)</h3>
+                    <p class="project-role">QA Analyst</p>
+                    <p class="project-description">Sustainability tracking platform for enterprise companies backed by Prince Harry's foundation.</p>
+                    <ul class="project-highlights">
+                        <li>Automated testing with Cypress</li>
+                        <li>Azure deployment management</li>
+                        <li>Datadog monitoring & incident response</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">Azure</span>
+                        <span class="tech-tag">Kubernetes</span>
+                    </div>
+                    <a href="https://travalyst.org/industry/" class="project-link" target="_blank">View Project →</a>
+                </div>
+
+                <!-- Oversite -->
+                <div class="project-card" data-delay="200">
+                    <div class="project-icon">📦</div>
+                    <h3 class="project-title">Oversite</h3>
+                    <p class="project-role">Software Engineer</p>
+                    <p class="project-description">Enterprise asset management and tracking platform with real-time dashboards.</p>
+                    <ul class="project-highlights">
+                        <li>React + NestJS architecture</li>
+                        <li>AWS Cognito authentication</li>
+                        <li>GraphQL API integration</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">NestJS</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                        <span class="tech-tag">GraphQL</span>
+                        <span class="tech-tag">Docker</span>
+                    </div>
+                    <a href="https://oversite.cloud/" class="project-link" target="_blank">View Project →</a>
+                </div>
+
+                <!-- Play Pro -->
+                <div class="project-card" data-delay="300">
+                    <div class="project-icon">🏀</div>
+                    <h3 class="project-title">Play Pro</h3>
+                    <p class="project-role">Software Engineer</p>
+                    <p class="project-description">School onboarding platform for Supersport Schools sports tracking system with live updates.</p>
+                    <ul class="project-highlights">
+                        <li>Real-time data pipelines</li>
+                        <li>Redis caching optimization</li>
+                        <li>Live sports event handling</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">Redis</span>
+                        <span class="tech-tag">GraphQL</span>
+                        <span class="tech-tag">AWS Cognito</span>
+                    </div>
+                    <a href="https://playpro.supersportschools.com/" class="project-link" target="_blank">View Project →</a>
+                </div>
+
+                <!-- WombatWords -->
+                <div class="project-card" data-delay="400">
+                    <div class="project-icon">💬</div>
+                    <h3 class="project-title">WombatWords</h3>
+                    <p class="project-role">Developer</p>
+                    <p class="project-description">AI-powered speech analysis platform for therapy sessions supporting Western Sydney University research.</p>
+                    <ul class="project-highlights">
+                        <li>OpenAI Whisper integration</li>
+                        <li>Serverless audio processing</li>
+                        <li>Real-time vocabulary tracking</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">OpenAI</span>
+                        <span class="tech-tag">Cerebrium</span>
+                        <span class="tech-tag">ML</span>
+                    </div>
+                </div>
+
+                <!-- Medipet -->
+                <div class="project-card" data-delay="500">
+                    <div class="project-icon">🐾</div>
+                    <h3 class="project-title">Medipet</h3>
+                    <p class="project-role">Software Developer</p>
+                    <p class="project-description">Pet insurance platform with intelligent quote calculation and automated workflows.</p>
+                    <ul class="project-highlights">
+                        <li>AWS Lambda quote engine</li>
+                        <li>Mailchimp automation</li>
+                        <li>Cypress E2E testing</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">AWS Lambda</span>
+                        <span class="tech-tag">Cypress</span>
+                    </div>
+                    <a href="https://apply.medipet.co.za/" class="project-link" target="_blank">View Project →</a>
+                </div>
+
+                <!-- AB Group -->
+                <div class="project-card" data-delay="600">
+                    <div class="project-icon">💼</div>
+                    <h3 class="project-title">AB Group</h3>
+                    <p class="project-role">Software Developer</p>
+                    <p class="project-description">Business management system migration from monolithic to microservices architecture.</p>
+                    <ul class="project-highlights">
+                        <li>Monolith to microservices</li>
+                        <li>API integrations (Joblogic, Access)</li>
+                        <li>Database optimization</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">PHP</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">SQL</span>
+                        <span class="tech-tag">Linux</span>
+                    </div>
+                </div>
+
+                <!-- Location Bank -->
+                <div class="project-card" data-delay="700">
+                    <div class="project-icon">📍</div>
+                    <h3 class="project-title">Location Bank</h3>
+                    <p class="project-role">Full Stack Developer</p>
+                    <p class="project-description">Business positioning system for location-based services with cloud deployment.</p>
+                    <ul class="project-highlights">
+                        <li>REST API development</li>
+                        <li>GCP containerization</li>
+                        <li>Third-party integrations</li>
+                    </ul>
+                    <div class="tech-tags">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">Docker</span>
+                        <span class="tech-tag">GCP</span>
+                    </div>
+                    <a href="https://locationbank.co.za/" class="project-link" target="_blank">View Project →</a>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <h2 class="footer-title">Let's Build Something</h2>
+                <p class="footer-text">
+                    Full-stack engineer passionate about scalable systems, 
+                    clean architecture, and delightful user experiences.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+                <p style="margin-top: 3rem; color: var(--text-dim); font-size: 0.85rem;">
+                    © 2026 Lucky MM
+                </p>
+            </div>
+        </footer>
     </div>
 
-    <!-- Weeva - Enhanced -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-leaf"></i> Weeva Sustainability Platform (now Travalyst)</h2>
-            <a href="https://travalyst.org/industry/" class="btn" target="_blank">Visit Website</a>
-        </div>
-        <div class="item-content">
-            <p><strong>QA Analyst - Weeva (Travalyst)</strong></p>
-            
-            <p>Built automated testing infrastructure for a sustainability tracking platform serving enterprise companies.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Architected automated testing frameworks using TypeScript and Cypress, establishing end-to-end test coverage for critical user journeys</li>
-                    <li>Managed application deployments on Azure, ensuring environment readiness and post-deployment stability</li>
-                    <li>Monitored production performance using Datadog, enabling proactive issue detection and rapid incident response</li>
-                    <li>Acted as technical liaison between development and business teams, translating complex technical issues into business context</li>
-                </ul>
-            </div>
-            
-            <div class="highlight-section">
-                <strong>Architecture:</strong> Microservices platform built with C# backend and Angular frontend, managed using Kubernetes and hosted on Azure.
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">C#</span>
-                <span class="tech-tag">Angular</span>
-                <span class="tech-tag">TypeScript</span>
-                <span class="tech-tag">Cypress</span>
-                <span class="tech-tag">Kubernetes</span>
-                <span class="tech-tag">Azure</span>
-                <span class="tech-tag">Datadog</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Necta Tech - Oversite + Orchestration Bullets -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-clipboard-list"></i> Oversite Asset Management</h2>
-            <a href="https://oversite.cloud/" class="btn" target="_blank">Visit Website</a>
-        </div>
-        <div class="item-content">
-            <p><strong>Software Engineer - Necta Tech</strong></p>
-            
-            <p>Built asset management and tracking platform for enterprise clients.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Built and maintained production application using React frontend and Node.js/NestJS backend</li>
-                    <li>Implemented authentication and authorization flows using AWS Cognito, ensuring secure user access and role-based permissions</li>
-                    <li>Developed asset tracking dashboards from Figma design specifications</li>
-                    <li>Integrated frontend components with backend APIs using Axios and GraphQL for PostgreSQL data management</li>
-                    <li>Created CI/CD pipelines with GitHub Actions for automated testing and deployments</li>
-                    <li>Deployed and managed Linux servers on DigitalOcean, configuring firewalls and security protocols</li>
-                    <li>Built and deployed Docker images, establishing containerization standards</li>
-                    <li>Designed backend workflows that allowed users to modify inputs and re-run individual steps of complex processes without restarting end-to-end jobs</li>
-                    <li>Coordinated multiple third-party APIs through deterministic backend pipelines to ensure predictable outputs and controlled side effects</li>
-                    <li>Built stateful, user-driven workflows connecting frontend controls to backend processing logic</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">NestJS</span>
-                <span class="tech-tag">TypeScript</span>
-                <span class="tech-tag">PostgreSQL</span>
-                <span class="tech-tag">GraphQL</span>
-                <span class="tech-tag">Axios</span>
-                <span class="tech-tag">AWS Cognito</span>
-                <span class="tech-tag">Docker</span>
-                <span class="tech-tag">GitHub Actions</span>
-            </div>
-        </div>
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const interactiveElements = document.querySelectorAll('a, .project-card, button');
 
-    <!-- Necta Tech - Play Pro + Orchestration Bullets -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-basketball-ball"></i> Play Pro - Supersport Schools</h2>
-            <a href="https://playpro.supersportschools.com/" class="btn" target="_blank">Visit Website</a>
-        </div>
-        <div class="item-content">
-            <p><strong>Software Engineer - Necta Tech</strong></p>
-            
-            <p>Built school onboarding platform for Supersport Schools sports tracking system.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Built and maintained web application for schools onboarding process using React and Node.js</li>
-                    <li>Implemented authentication and authorization flows using AWS Cognito with role-based permissions</li>
-                    <li>Integrated frontend components with backend APIs using Axios and GraphQL for PostgreSQL data management</li>
-                    <li>Developed sports tracking dashboards with real-time data updates from Figma design specifications</li>
-                    <li>Deployed and managed Linux servers on DigitalOcean, configuring firewalls and security protocols</li>
-                    <li>Introduced Redis caching solutions that improved application performance and reduced database load</li>
-                    <li>Built and deployed Docker images, establishing containerization standards</li>
-                    <li>Designed real-time data pipelines powering live dashboards with low-latency updates</li>
-                    <li>Introduced caching and background processing to decouple frontend responsiveness from backend computation</li>
-                    <li>Optimized backend workflows to support concurrent users and burst traffic during live sporting events</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">Express</span>
-                <span class="tech-tag">AWS Cognito</span>
-                <span class="tech-tag">PostgreSQL</span>
-                <span class="tech-tag">GraphQL</span>
-                <span class="tech-tag">Axios</span>
-                <span class="tech-tag">Redis</span>
-                <span class="tech-tag">Docker</span>
-                <span class="tech-tag">DigitalOcean</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- WombatWords -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-comments"></i> WombatWords - Speech Analysis Platform</h2>
-        </div>
-        <div class="item-content">
-            <p><strong>Developer - Neurabuild /Western Sydney University Collaboration</strong></p>
-            
-            <p>Built an AI-powered web application for speech therapists to analyze vocabulary acquisition during late talker therapy sessions.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Integrated OpenAI Whisper for accurate speech-to-text transcription of therapy sessions</li>
-                    <li>Built serverless infrastructure using Cerebrium to process audio and analyze word usage patterns</li>
-                    <li>Developed web interface using React frontend and Node.js backend for therapists to track vocabulary acquisition metrics in real-time</li>
-                    <li>Implemented word counting and analysis algorithms to support clinical research on language development</li>
-                </ul>
-            </div>
-            
-            <div class="highlight-section">
-                <strong>Use Case:</strong> Supports speech therapists and researchers at Western Sydney University conducting Vocabulary Acquisition and Usage for Late Talker (VAULT) sessions, providing quantitative data on children's language development.
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">OpenAI Whisper</span>
-                <span class="tech-tag">Cerebrium</span>
-                <span class="tech-tag">Machine Learning</span>
-                <span class="tech-tag">Speech Recognition</span>
-                <span class="tech-tag">Serverless</span>
-            </div>
-        </div>
-    </div>
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
 
-    <!-- AB Group -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-briefcase"></i> AB Group</h2>
-        </div>
-        <div class="item-content">
-            <p><strong>Software Developer - AB Group</strong></p>
-            
-            <p>Owned the complete development lifecycle for a business management system.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Architected migration from monolithic to microservices architecture, refactoring legacy codebases for scalability</li>
-                    <li>Integrated external APIs including Joblogic and Access for automated data synchronization</li>
-                    <li>Developed stored procedures and database functions in SQL to optimize backend logic and query performance</li>
-                    <li>Built full-stack features using PHP backend and React frontend based on Figma designs</li>
-                    <li>Deployed and managed Linux servers, configuring firewalls, managing user permissions, and enforcing secure network access policies</li>
-                    <li>Provided rapid technical support and resolved production issues, minimizing downtime</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">PHP</span>
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">SQL</span>
-                <span class="tech-tag">Linux</span>
-                <span class="tech-tag">REST APIs</span>
-            </div>
-        </div>
-    </div>
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
 
-    <!-- Location Bank -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-map-pin"></i> Location Bank - Business Positioning System</h2>
-            <a href="https://locationbank.co.za/" class="btn" target="_blank">Visit Website</a>
-        </div>
-        <div class="item-content">
-            <p><strong>Full Stack Developer - Silmac</strong></p>
-            
-            <p>Developed and maintained a business positioning system for location-based services.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Developed REST APIs using C# and Node.js for core location services</li>
-                    <li>Integrated third-party APIs using Axios for seamless communication between internal services and external platforms</li>
-                    <li>Containerized services using Docker and deployed applications to Google Cloud Platform</li>
-                    <li>Built features for the Angular frontend and maintained .NET backend services</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">C#</span>
-                <span class="tech-tag">.NET</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">Angular</span>
-                <span class="tech-tag">Axios</span>
-                <span class="tech-tag">Docker</span>
-                <span class="tech-tag">GCP</span>
-                <span class="tech-tag">REST APIs</span>
-            </div>
-        </div>
-    </div>
+        // Three.js Background
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 
-    <!-- Traccar -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-map-marked-alt"></i> Traccar GPS Tracking Platform</h2>
-        </div>
-        <div class="item-content">
-            <p><strong>Full Stack Developer - Silmac</strong></p>
-            
-            <p>Migrated and modernized a GPS tracking platform used for asset and vehicle tracking.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Migrated Traccar tracking platform from Java to Node.js/React stack, modernizing the codebase and improving maintainability</li>
-                    <li>Refactored legacy code to improve performance and enable future feature development</li>
-                    <li>Deployed updated services to Google Cloud Platform using Docker containers</li>
-                    <li>Enhanced functionality for real-time GPS tracking and reporting features</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">Java</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Docker</span>
-                <span class="tech-tag">GCP</span>
-                <span class="tech-tag">GPS Tracking</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Medipet -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-paw"></i> Medipet Registration Portal</h2>
-            <a href="https://apply.medipet.co.za/" class="btn" target="_blank">Visit Website</a>
-        </div>
-        <div class="item-content">
-            <p><strong>Software Developer - Medipet</strong></p>
-            
-            <p>Built and maintained pet insurance registration platform with intelligent quote calculation system.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Built serverless quote calculation algorithm using AWS Lambda that analyzed client data to determine optimal insurance plans and pricing</li>
-                    <li>Developed frontend features and backend API integrations for registration workflow</li>
-                    <li>Integrated Mailchimp API to automate mailing list management and customer communications</li>
-                    <li>Implemented automated end-to-end tests using Cypress to improve test coverage and reliability</li>
-                    <li>Performed database queries and updates to ensure data integrity across the platform</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">AWS Lambda</span>
-                <span class="tech-tag">Mailchimp API</span>
-                <span class="tech-tag">Cypress</span>
-            </div>
-        </div>
-    </div>
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        camera.position.z = 50;
 
-    <!-- IceBreakers -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-globe"></i> IceBreakers Online</h2>
-        </div>
-        <div class="item-content">
-            <p><strong>Developer - IceBreakers Online</strong></p>
-            
-            <p>Developed features and optimization strategies for an online platform.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Built full-stack features using React frontend and Node.js backend</li>
-                    <li>Implemented Firebase for authentication and real-time data synchronization</li>
-                    <li>Built automated test suites (unit, component, browser) to ensure stability across deployments</li>
-                    <li>Extracted and interpreted Google Analytics data to inform content and marketing strategy</li>
-                    <li>Implemented SEO optimization including meta tags, structured data, and content optimization</li>
-                    <li>Created data visualizations and presented findings to stakeholders</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">Firebase</span>
-                <span class="tech-tag">JavaScript</span>
-                <span class="tech-tag">Google Analytics</span>
-                <span class="tech-tag">SEO</span>
-                <span class="tech-tag">Testing</span>
-            </div>
-        </div>
-    </div>
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
 
-    <!-- Amonet -->
-    <div class="portfolio-item">
-        <div class="item-header">
-            <h2><i class="fas fa-shopping-cart"></i> Amonet E-commerce Platform</h2>
-        </div>
-        <div class="item-content">
-            <p><strong>Full Stack Developer - Amonet</strong></p>
-            
-            <p>Developed and enhanced e-commerce platform with payment and inventory integrations.</p>
-            
-            <div class="responsibilities">
-                <strong>Key Contributions:</strong>
-                <ul>
-                    <li>Built full-stack features using PHP backend and JavaScript frontend, improving usability and customer experience with zero downtime</li>
-                    <li>Executed SQL CRUD operations to manage product catalogs, pricing, and inventory</li>
-                    <li>Integrated third-party APIs for payment processing, shipping, and inventory management</li>
-                    <li>Implemented SEO strategies including technical optimization and structured data markup</li>
-                    <li>Built data visualizations and performed quantitative analysis on site performance metrics</li>
-                </ul>
-            </div>
-            
-            <div class="tech-tags">
-                <span class="tech-tag">PHP</span>
-                <span class="tech-tag">JavaScript</span>
-                <span class="tech-tag">SQL</span>
-                <span class="tech-tag">E-commerce</span>
-                <span class="tech-tag">API Integration</span>
-                <span class="tech-tag">SEO</span>
-            </div>
-        </div>
-    </div>
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 200;
+        }
 
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
-    
-    <div class="footer">
-        <p>© 2026 Lucky MM | Software Engineer</p>
-    </div>
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.8,
+            color: 0xa78bfa,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Create connecting lines
+        const linesMaterial = new THREE.LineBasicMaterial({
+            color: 0x22d3ee,
+            transparent: true,
+            opacity: 0.1
+        });
+
+        // Mouse interaction
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particlesMesh.rotation.y += 0.0005;
+            particlesMesh.rotation.x += 0.0002;
+
+            // Mouse parallax
+            particlesMesh.rotation.x += mouseY * 0.00005;
+            particlesMesh.rotation.y += mouseX * 0.00005;
+
+            // Scroll parallax
+            const scrollY = window.scrollY;
+            camera.position.y = scrollY * 0.01;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe section titles
+        document.querySelectorAll('.section-title').forEach(el => observer.observe(el));
+
+        // Observe project cards with staggered delays
+        document.querySelectorAll('.project-card').forEach((card, index) => {
+            setTimeout(() => {
+                observer.observe(card);
+            }, index * 50);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+FMM
+        // Add particle color variation
+        const colors = [0xa78bfa, 0x22d3ee, 0xf472b6];
+        let colorIndex = 0;
+
+        setInterval(() => {
+            colorIndex = (colorIndex + 1) % colors.length;
+            particlesMaterial.color.setHex(colors[colorIndex]);
+        }, 5000);
+    </script>
 </body>
 </html>
